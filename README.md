@@ -2,7 +2,7 @@
 
 Aplicação web para gerenciar alunos, cursos, disciplinas, professores, produtos e pedidos. Esta versão aplica os tópicos 1 e 3 da **Avaliação Final de Encontrabilidade em Projetos Web** às listagens existentes.
 
-**Integrantes:** [preencher com os nomes completos da equipe]
+**Integrantes:** Henrique Silva do Nascimento
 
 ## Executar para a apresentação
 
