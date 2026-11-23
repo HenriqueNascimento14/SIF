@@ -1,6 +1,6 @@
 # SIF · Sistema Interno da Fatec
 
-Aplicação web para gerenciar alunos, cursos, disciplinas, professores, produtos e pedidos. Esta versão aplica os tópicos 1 e 3 da **Avaliação Final de Encontrabilidade em Projetos Web** às listagens existentes.
+Aplicação web para gerenciar alunos, cursos, disciplinas, professores, produtos e pedidos.
 
 **Integrantes:** Henrique Silva do Nascimento
 
