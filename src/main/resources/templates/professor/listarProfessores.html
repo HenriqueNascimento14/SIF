@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Professores — SIF</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+      <script defer th:src="@{/js/busca.js}"></script>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="brand"><a href="/home">SIF</a></div>
+      <nav>
+        <a href="/home">Início</a>
+        <a href="/alunos/listar">Alunos</a>
+        <a href="/cursos/listar">Cursos</a>
+        <a href="/disciplinas/listar">Disciplinas</a>
+        <a href="/professores/listar">Professores</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="page-header">
+        <div>
+          <h1>Professores</h1>
+          <p>Corpo docente cadastrado no sistema.</p>
+        </div>
+        <a class="btn btn-primary" href="/professores/criar">+ Novo Professor</a>
+      </div>
+
+      <form class="search-panel" role="search" aria-label="Pesquisar professores" method="get"
+            th:action="@{/professores/listar}" data-search-form>
+        <label class="search-field search-field-main">
+          <span>Pesquisar professores</span>
+          <input type="search" name="q" th:value="${q}" placeholder="Nome ou CPF" />
+        </label>
+        <input th:if="${param.sort != null}" type="hidden" name="sort" th:value="${param.sort[0]}" />
+        <label class="search-field">
+          <span>Graduação</span>
+          <select name="graduacao">
+            <option value="">Todas as graduações</option>
+            <option
+              th:each="grad : ${graduacoes}"
+              th:value="${grad}"
+              th:text="${grad}"
+              th:selected="${graduacao != null and graduacao == grad}"
+            ></option>
+          </select>
+        </label>
+        <div class="search-actions">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+          <a class="btn btn-ghost" th:href="@{/professores/listar}">Limpar busca</a>
+        </div>
+      </form>
+
+      <p class="search-summary" role="status" data-search-status
+         th:text="${#lists.size(professores) == 1 ? '1 resultado' : #lists.size(professores) + ' resultados'}"></p>
+      <div class="table-wrap" role="region" aria-label="Resultados de professores" tabindex="0" data-search-results>
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/professores/listar(q=${q}, graduacao=${graduacao}, sort='nomeProfessor,' + (${param.sort != null and #strings.contains(param.sort, 'nomeProfessor,asc')} ? 'desc' : 'asc'))}"
+                  >Nome</a
+                >
+              </th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/professores/listar(q=${q}, graduacao=${graduacao}, sort='cpfProfessor,' + (${param.sort != null and #strings.contains(param.sort, 'cpfProfessor,asc')} ? 'desc' : 'asc'))}"
+                  >CPF</a
+                >
+              </th>
+              <th>RG</th>
+              <th>Telefone</th>
+              <th>Endereço</th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/professores/listar(q=${q}, graduacao=${graduacao}, sort='graduacaoProfessor,' + (${param.sort != null and #strings.contains(param.sort, 'graduacaoProfessor,asc')} ? 'desc' : 'asc'))}"
+                  >Graduação</a
+                >
+              </th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="professor : ${professores}">
+              <td>
+                <img
+                  class="avatar"
+                  th:if="${professor.fotoProfessor != null}"
+                  th:src="@{/professores/foto/{id}(id=${professor.idProfessor})}"
+                  alt="Foto"
+                />
+                <span
+                  class="avatar-placeholder"
+                  th:if="${professor.fotoProfessor == null}"
+                  th:text="${#strings.substring(professor.nomeProfessor,0,1)}"
+                ></span>
+              </td>
+              <td th:text="${professor.nomeProfessor}"></td>
+              <td th:text="${professor.cpfProfessor}"></td>
+              <td th:text="${professor.rgProfessor}"></td>
+              <td th:text="${professor.telefoneProfessor}"></td>
+              <td th:text="${professor.enderecoProfessor}"></td>
+              <td th:text="${professor.graduacaoProfessor}"></td>
+              <td>
+                <div class="table-actions">
+                  <a
+                    class="btn btn-ghost btn-sm"
+                    th:href="@{/professores/editar/{id}(id=${professor.idProfessor})}"
+                    >Editar</a
+                  >
+                  <a
+                    class="btn btn-danger btn-sm"
+                    th:href="@{/professores/excluir/{id}(id=${professor.idProfessor})}"
+                    onclick="return confirm('Deseja realmente excluir este professor?')"
+                    >Excluir</a
+                  >
+                </div>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(professores)}">
+              <td colspan="8" class="empty-state"
+                  th:text="${(!#strings.isEmpty(#strings.trim(q)) or !#strings.isEmpty(graduacao)) ? 'Nenhum resultado. Tente outro termo ou limpe a busca.' : 'Nenhum professor cadastrado ainda.'}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cursos — SIF</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+      <script defer th:src="@{/js/busca.js}"></script>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="brand"><a href="/home">SIF</a></div>
+      <nav>
+        <a href="/home">Início</a>
+        <a href="/alunos/listar">Alunos</a>
+        <a href="/cursos/listar">Cursos</a>
+        <a href="/disciplinas/listar">Disciplinas</a>
+        <a href="/professores/listar">Professores</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="page-header">
+        <div>
+          <h1>Cursos</h1>
+          <p>Cursos oferecidos pela instituição.</p>
+        </div>
+        <a class="btn btn-primary" href="/cursos/criar">+ Novo Curso</a>
+      </div>
+
+      <form class="search-panel" role="search" aria-label="Pesquisar cursos" method="get"
+            th:action="@{/cursos/listar}" data-search-form>
+        <label class="search-field search-field-main">
+          <span>Pesquisar cursos</span>
+          <input type="search" name="q" th:value="${q}" placeholder="Nome ou descrição" />
+        </label>
+        <input th:if="${param.sort != null}" type="hidden" name="sort" th:value="${param.sort[0]}" />
+        <div class="search-actions">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+          <a class="btn btn-ghost" th:href="@{/cursos/listar}">Limpar busca</a>
+        </div>
+      </form>
+
+      <p class="search-summary" role="status" data-search-status
+         th:text="${#lists.size(cursos) == 1 ? '1 resultado' : #lists.size(cursos) + ' resultados'}"></p>
+      <div class="table-wrap" role="region" aria-label="Resultados de cursos" tabindex="0" data-search-results>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/cursos/listar(q=${q}, sort='nomeCurso,' + (${param.sort != null and #strings.contains(param.sort, 'nomeCurso,asc')} ? 'desc' : 'asc'))}"
+                  >Nome</a
+                >
+              </th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/cursos/listar(q=${q}, sort='descricaoCurso,' + (${param.sort != null and #strings.contains(param.sort, 'descricaoCurso,asc')} ? 'desc' : 'asc'))}"
+                  >Descrição</a
+                >
+              </th>
+              <th>Carga Horária</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="curso : ${cursos}">
+              <td th:text="${curso.nomeCurso}"></td>
+              <td th:text="${curso.descricaoCurso}"></td>
+              <td th:text="${curso.cargaHorariaCurso}"></td>
+              <td>
+                <div class="table-actions">
+                  <a
+                    class="btn btn-ghost btn-sm"
+                    th:href="@{/cursos/editar/{id}(id=${curso.idCurso})}"
+                    >Editar</a
+                  >
+                  <a
+                    class="btn btn-danger btn-sm"
+                    th:href="@{/cursos/excluir/{id}(id=${curso.idCurso})}"
+                    onclick="
+                      return confirm('Deseja realmente excluir este curso?');
+                    "
+                    >Excluir</a
+                  >
+                </div>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(cursos)}">
+              <td colspan="4" class="empty-state"
+                  th:text="${(!#strings.isEmpty(#strings.trim(q))) ? 'Nenhum resultado. Tente outro termo ou limpe a busca.' : 'Nenhum curso cadastrado ainda.'}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Produtos — SIF</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+      <script defer th:src="@{/js/busca.js}"></script>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="brand"><a href="/home">SIF</a></div>
+      <nav>
+        <a href="/home">Início</a>
+        <a href="/alunos/listar">Alunos</a>
+        <a href="/cursos/listar">Cursos</a>
+        <a href="/disciplinas/listar">Disciplinas</a>
+        <a href="/professores/listar">Professores</a>
+        <a href="/produtos/listar">Produtos</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="page-header">
+        <div>
+          <h1>Produtos</h1>
+          <p>Lista de produtos cadastrados no sistema.</p>
+        </div>
+        <a class="btn btn-primary" href="/produtos/criar">+ Novo Produto</a>
+      </div>
+
+      <form class="search-panel" role="search" aria-label="Pesquisar produtos" method="get"
+            th:action="@{/produtos/listar}" data-search-form>
+        <label class="search-field search-field-main">
+          <span>Pesquisar produtos</span>
+          <input type="search" name="q" th:value="${q}" placeholder="Descrição, marca ou modelo" />
+        </label>
+        <input th:if="${param.sort != null}" type="hidden" name="sort" th:value="${param.sort[0]}" />
+        <label class="search-field">
+          <span>Marca</span>
+          <select name="marca">
+            <option value="">Todas as marcas</option>
+            <option
+              th:each="m : ${marcas}"
+              th:value="${m}"
+              th:text="${m}"
+              th:selected="${marca != null and marca == m}"
+            ></option>
+          </select>
+        </label>
+        <label class="search-field">
+          <span>Faixa de preço</span>
+          <select name="faixa">
+            <option th:each="opcao : ${faixas}"
+                    th:value="${opcao.name()}" th:text="${opcao.rotulo}"
+                    th:selected="${opcao == faixa}"></option>
+          </select>
+        </label>
+        <div class="search-actions">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+          <a class="btn btn-ghost" th:href="@{/produtos/listar}">Limpar busca</a>
+        </div>
+      </form>
+
+      <p class="search-summary" role="status" data-search-status
+         th:text="${#lists.size(produtos) == 1 ? '1 resultado' : #lists.size(produtos) + ' resultados'}"></p>
+      <div class="table-wrap" role="region" aria-label="Resultados de produtos" tabindex="0" data-search-results>
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/produtos/listar(q=${q}, marca=${marca}, faixa=${faixa}, sort='descricaoProduto,' + (${param.sort != null and #strings.contains(param.sort, 'descricaoProduto,asc')} ? 'desc' : 'asc'))}"
+                  >Descrição</a
+                >
+              </th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/produtos/listar(q=${q}, marca=${marca}, faixa=${faixa}, sort='marcaProduto,' + (${param.sort != null and #strings.contains(param.sort, 'marcaProduto,asc')} ? 'desc' : 'asc'))}"
+                  >Marca</a
+                >
+              </th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/produtos/listar(q=${q}, marca=${marca}, faixa=${faixa}, sort='modeloProduto,' + (${param.sort != null and #strings.contains(param.sort, 'modeloProduto,asc')} ? 'desc' : 'asc'))}"
+                  >Modelo</a
+                >
+              </th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/produtos/listar(q=${q}, marca=${marca}, faixa=${faixa}, sort='valorProduto,' + (${param.sort != null and #strings.contains(param.sort, 'valorProduto,asc')} ? 'desc' : 'asc'))}"
+                  >Valor</a
+                >
+              </th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="produto : ${produtos}">
+              <td>
+                <img
+                  class="avatar"
+                  th:if="${produto.fotoProduto != null}"
+                  th:src="@{/produtos/foto/{id}(id=${produto.idProduto})}"
+                  alt="Foto"
+                />
+                <span
+                  class="avatar-placeholder"
+                  th:if="${produto.fotoProduto == null}"
+                  th:text="${#strings.substring(produto.descricaoProduto,0,1)}"
+                ></span>
+              </td>
+              <td th:text="${produto.descricaoProduto}"></td>
+              <td th:text="${produto.marcaProduto}"></td>
+              <td th:text="${produto.modeloProduto}"></td>
+              <td th:text="${'R$ ' + #numbers.formatDecimal(produto.valorProduto, 1, 'POINT', 2, 'COMMA')}"></td>
+              <td>
+                <div>
+                  <a
+                    class="btn btn-ghost btn-sm"
+                    th:href="@{/produtos/editar/{id}(id=${produto.idProduto})}"
+                    >Editar</a
+                  >
+                  <a
+                    class="btn btn-danger btn-sm"
+                    th:href="@{/produtos/excluir/{id}(id=${produto.idProduto})}"
+                    onclick="
+                      return confirm('Deseja realmente excluir este produto?');
+                    "
+                    >Excluir</a
+                  >
+                </div>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(produtos)}">
+              <td colspan="6" class="empty-state"
+                  th:text="${(!#strings.isEmpty(#strings.trim(q)) or !#strings.isEmpty(marca) or faixa.name() != 'TODOS') ? 'Nenhum resultado. Tente outro termo ou limpe a busca.' : 'Nenhum produto cadastrado ainda.'}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

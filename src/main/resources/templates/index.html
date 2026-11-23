@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIF — Sistema Interno da Fatec</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="brand"><a href="/home">SIF</a></div>
+      <nav>
+        <a href="/login">Entrar</a>
+        <a href="/usuarios/criar">Cadastrar-se</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="auth-card auth-card-wide">
+        <section class="hero">
+          <h1>Sistema SIF</h1>
+          <p>
+            Gerencie alunos, cursos, disciplinas e professores em um só lugar.
+          </p>
+        </section>
+
+        <div class="auth-actions">
+          <a class="btn btn-primary" href="/login">Acessar sistema</a>
+          <a class="btn btn-outline" href="/usuarios/criar">Cadastrar-se</a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

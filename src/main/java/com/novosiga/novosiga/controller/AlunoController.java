@@ -1,0 +1,117 @@
+package com.novosiga.novosiga.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.novosiga.novosiga.dto.AlunoCursoDTO;
+import com.novosiga.novosiga.model.Aluno;
+import com.novosiga.novosiga.model.Curso;
+import com.novosiga.novosiga.service.AlunoService;
+import com.novosiga.novosiga.service.CursoService;
+
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+@Controller
+@RequestMapping("/alunos")
+public class AlunoController {
+
+    // Injeção de dependencias da service de alunos
+    @Autowired
+    private AlunoService alunoService;
+
+    @Autowired 
+    private CursoService cursoService;
+
+    // Metodo para salvar um aluno
+    @PostMapping("/salvar")
+    public String salvar(@ModelAttribute Aluno aluno, @RequestParam("foto") MultipartFile foto) {
+        try {
+            if (!foto.isEmpty()) {
+                aluno.setFotoAluno(foto.getBytes());
+                aluno.setTipoFoto(foto.getContentType());
+            } else if(aluno.getIdAluno() != null) {
+                Aluno alunoExistente = alunoService.findById(aluno.getIdAluno());
+                if(alunoExistente != null){
+                    aluno.setFotoAluno(alunoExistente.getFotoAluno());
+                    aluno.setTipoFoto(alunoExistente.getTipoFoto());
+                }
+            }
+            alunoService.save(aluno);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redirect:/alunos/listar";
+    }
+
+    // Metodo para listar alunos com busca, filtro e ordenacao
+    @GetMapping("/listar")
+    public String listar(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Integer cursoId,
+            @SortDefault(sort = "nomeAluno") Sort sort,
+            Model model) {
+        List<Aluno> alunos = alunoService.buscar(q, cursoId, sort);
+        model.addAttribute("alunos", alunos);
+        model.addAttribute("cursos", cursoService.findAll());
+        model.addAttribute("q", q);
+        model.addAttribute("cursoId", cursoId);
+        return "aluno/listarAlunos";
+    }
+
+    // Metodo para abrir o formulario para cadastro de aluno
+    @GetMapping("/criar")
+    public String criarForm(Model model) {
+        model.addAttribute("aluno", new Aluno());
+        List<Curso> cursos = cursoService.findAll();
+        model.addAttribute("cursos", cursos);
+        return "aluno/formularioAluno";
+    }
+
+    // Método para excluir um aluno pelo ID
+    @GetMapping("/excluir/{id}")
+    public String excluir(@PathVariable Integer id) {
+        alunoService.deleteById(id);
+        return "redirect:/alunos/listar";
+    }
+
+    // Método para abrir o formulário de edição de alunos
+    @GetMapping("/editar/{id}")
+    public String editarForm(@PathVariable Integer id, Model model) {
+        Aluno aluno = alunoService.findById(id);
+        model.addAttribute("aluno", aluno);
+        List<Curso> cursos = cursoService.findAll();
+        model.addAttribute("cursos", cursos);
+        return "aluno/formularioAluno";
+    }
+
+    @GetMapping("/foto/{id}")
+    public ResponseEntity<byte[]> foto(@PathVariable Integer id) {
+        Aluno aluno = alunoService.findById(id);
+        if (aluno == null || aluno.getFotoAluno() == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(aluno.getTipoFoto())).body(aluno.getFotoAluno());
+    }
+    
+    @GetMapping("/alunos-por-curso")
+    public String listarAlunosPorCurso(Model model) {
+        List<AlunoCursoDTO> alunos = alunoService.listarAlunosPorCurso();
+        model.addAttribute("alunos", alunos);
+        return "aluno/alunosPorCurso";
+    }
+    
+
+}

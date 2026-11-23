@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disciplinas — SIF</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+      <script defer th:src="@{/js/busca.js}"></script>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="brand"><a href="/home">SIF</a></div>
+      <nav>
+        <a href="/home">Início</a>
+        <a href="/alunos/listar">Alunos</a>
+        <a href="/cursos/listar">Cursos</a>
+        <a href="/disciplinas/listar">Disciplinas</a>
+        <a href="/professores/listar">Professores</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="page-header">
+        <div>
+          <h1>Disciplinas</h1>
+          <p>Disciplinas cadastradas no sistema.</p>
+        </div>
+        <a class="btn btn-primary" href="/disciplinas/criar"
+          >+ Nova Disciplina</a
+        >
+      </div>
+
+      <form class="search-panel" role="search" aria-label="Pesquisar disciplinas" method="get"
+            th:action="@{/disciplinas/listar}" data-search-form>
+        <label class="search-field search-field-main">
+          <span>Pesquisar disciplinas</span>
+          <input type="search" name="q" th:value="${q}" placeholder="Nome ou sigla" />
+        </label>
+        <input th:if="${param.sort != null}" type="hidden" name="sort" th:value="${param.sort[0]}" />
+        <label class="search-field">
+          <span>Professor</span>
+          <select name="professorId">
+            <option value="">Todos os professores</option>
+            <option
+              th:each="prof : ${professores}"
+              th:value="${prof.idProfessor}"
+              th:text="${prof.nomeProfessor}"
+              th:selected="${professorId != null and professorId == prof.idProfessor}"
+            ></option>
+          </select>
+        </label>
+        <label class="search-field">
+          <span>Curso</span>
+          <select name="cursoId">
+            <option value="">Todos os cursos</option>
+            <option
+              th:each="curso : ${cursos}"
+              th:value="${curso.idCurso}"
+              th:text="${curso.nomeCurso}"
+              th:selected="${cursoId != null and cursoId == curso.idCurso}"
+            ></option>
+          </select>
+        </label>
+        <div class="search-actions">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+          <a class="btn btn-ghost" th:href="@{/disciplinas/listar}">Limpar busca</a>
+        </div>
+      </form>
+
+      <p class="search-summary" role="status" data-search-status
+         th:text="${#lists.size(disciplinas) == 1 ? '1 resultado' : #lists.size(disciplinas) + ' resultados'}"></p>
+      <div class="table-wrap" role="region" aria-label="Resultados de disciplinas" tabindex="0" data-search-results>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/disciplinas/listar(q=${q}, professorId=${professorId}, cursoId=${cursoId}, sort='nomeDisciplina,' + (${param.sort != null and #strings.contains(param.sort, 'nomeDisciplina,asc')} ? 'desc' : 'asc'))}"
+                  >Nome</a
+                >
+              </th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/disciplinas/listar(q=${q}, professorId=${professorId}, cursoId=${cursoId}, sort='siglaDisciplina,' + (${param.sort != null and #strings.contains(param.sort, 'siglaDisciplina,asc')} ? 'desc' : 'asc'))}"
+                  >Sigla</a
+                >
+              </th>
+              <th>Carga Horária</th>
+              <th>Professor</th>
+              <th>Curso</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="disciplina : ${disciplinas}">
+              <td th:text="${disciplina.nomeDisciplina}"></td>
+              <td th:text="${disciplina.siglaDisciplina}"></td>
+              <td th:text="${disciplina.cargHorariaDisciplina}"></td>
+              <td th:text="${disciplina.professor?.nomeProfessor ?: 'Sem professor'}"></td>
+              <td th:text="${disciplina.curso?.nomeCurso ?: 'Sem curso'}"></td>
+              <td>
+                <div class="table-actions">
+                  <a
+                    class="btn btn-ghost btn-sm"
+                    th:href="@{/disciplinas/editar/{id}(id=${disciplina.idDisciplina})}"
+                    >Editar</a
+                  >
+                  <a
+                    class="btn btn-danger btn-sm"
+                    th:href="@{/disciplinas/excluir/{id}(id=${disciplina.idDisciplina})}"
+                    onclick="
+                      return confirm(
+                        'Deseja realmente excluir esta disciplina?',
+                      );
+                    "
+                    >Excluir</a
+                  >
+                </div>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(disciplinas)}">
+              <td colspan="6" class="empty-state"
+                  th:text="${(!#strings.isEmpty(#strings.trim(q)) or professorId != null or cursoId != null) ? 'Nenhum resultado. Tente outro termo ou limpe a busca.' : 'Nenhuma disciplina cadastrada ainda.'}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

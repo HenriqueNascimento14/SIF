@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alunos — SIF</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+      <script defer th:src="@{/js/busca.js}"></script>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="brand"><a href="/home">SIF</a></div>
+      <nav>
+        <a href="/home">Início</a>
+        <a href="/alunos/listar">Alunos</a>
+        <a href="/cursos/listar">Cursos</a>
+        <a href="/disciplinas/listar">Disciplinas</a>
+        <a href="/professores/listar">Professores</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="page-header">
+        <div>
+          <h1>Alunos</h1>
+          <p>Lista de estudantes cadastrados no sistema.</p>
+        </div>
+        <a class="btn btn-primary" href="/alunos/criar">+ Novo Aluno</a>
+      </div>
+
+      <form class="search-panel" role="search" aria-label="Pesquisar alunos" method="get"
+            th:action="@{/alunos/listar}" data-search-form>
+        <label class="search-field search-field-main">
+          <span>Pesquisar alunos</span>
+          <input type="search" name="q" th:value="${q}" placeholder="Nome, CPF ou cidade" />
+        </label>
+        <input th:if="${param.sort != null}" type="hidden" name="sort" th:value="${param.sort[0]}" />
+        <label class="search-field">
+          <span>Curso</span>
+          <select name="cursoId">
+            <option value="">Todos os cursos</option>
+            <option
+              th:each="curso : ${cursos}"
+              th:value="${curso.idCurso}"
+              th:text="${curso.nomeCurso}"
+              th:selected="${cursoId != null and cursoId == curso.idCurso}"
+            ></option>
+          </select>
+        </label>
+        <div class="search-actions">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+          <a class="btn btn-ghost" th:href="@{/alunos/listar}">Limpar busca</a>
+        </div>
+      </form>
+
+      <p class="search-summary" role="status" data-search-status
+         th:text="${#lists.size(alunos) == 1 ? '1 resultado' : #lists.size(alunos) + ' resultados'}"></p>
+      <div class="table-wrap" role="region" aria-label="Resultados de alunos" tabindex="0" data-search-results>
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/alunos/listar(q=${q}, cursoId=${cursoId}, sort='nomeAluno,' + (${param.sort != null and #strings.contains(param.sort, 'nomeAluno,asc')} ? 'desc' : 'asc'))}"
+                  >Nome</a
+                >
+              </th>
+              <th>Endereço</th>
+              <th>Bairro</th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/alunos/listar(q=${q}, cursoId=${cursoId}, sort='cidadeAluno,' + (${param.sort != null and #strings.contains(param.sort, 'cidadeAluno,asc')} ? 'desc' : 'asc'))}"
+                  >Cidade</a
+                >
+              </th>
+              <th>UF</th>
+              <th>CEP</th>
+              <th>Telefone</th>
+              <th>
+                <a
+                  class="sort-link"
+                  th:href="@{/alunos/listar(q=${q}, cursoId=${cursoId}, sort='cpfAluno,' + (${param.sort != null and #strings.contains(param.sort, 'cpfAluno,asc')} ? 'desc' : 'asc'))}"
+                  >CPF</a
+                >
+              </th>
+              <th>Curso</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="aluno : ${alunos}">
+              <td>
+                <img
+                  class="avatar"
+                  th:if="${aluno.fotoAluno != null}"
+                  th:src="@{/alunos/foto/{id}(id=${aluno.idAluno})}"
+                  alt="Foto"
+                />
+                <span
+                  class="avatar-placeholder"
+                  th:if="${aluno.fotoAluno == null}"
+                  th:text="${#strings.substring(aluno.nomeAluno,0,1)}"
+                ></span>
+              </td>
+              <td th:text="${aluno.nomeAluno}"></td>
+              <td th:text="${aluno.enderecoAluno}"></td>
+              <td th:text="${aluno.bairroAluno}"></td>
+              <td th:text="${aluno.cidadeAluno}"></td>
+              <td th:text="${aluno.estadoAluno}"></td>
+              <td th:text="${aluno.cepAluno}"></td>
+              <td th:text="${aluno.telefoneAluno}"></td>
+              <td th:text="${aluno.cpfAluno}"></td>
+              <td th:text="${aluno.curso?.nomeCurso ?: 'Sem curso'}"></td>
+              <td>
+                <div>
+                  <a
+                    class="btn btn-ghost btn-sm"
+                    th:href="@{/alunos/editar/{id}(id=${aluno.idAluno})}"
+                    >Editar</a
+                  >
+                  <a
+                    class="btn btn-danger btn-sm"
+                    th:href="@{/alunos/excluir/{id}(id=${aluno.idAluno})}"
+                    onclick="
+                      return confirm('Deseja realmente excluir este aluno?');
+                    "
+                    >Excluir</a
+                  >
+                </div>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(alunos)}">
+              <td colspan="11" class="empty-state"
+                  th:text="${(!#strings.isEmpty(#strings.trim(q)) or cursoId != null) ? 'Nenhum resultado. Tente outro termo ou limpe a busca.' : 'Nenhum aluno cadastrado ainda.'}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>
