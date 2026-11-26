@@ -1,75 +1,97 @@
-# SIF · Sistema Interno da Fatec
+# SIF — Sistema Interno da Fatec
 
-Aplicação web para gerenciar alunos, cursos, disciplinas, professores, produtos e pedidos.
+O SIF é uma aplicação web para gerenciar alunos, cursos, disciplinas, professores, produtos e pedidos. Para a **Avaliação Final de Encontrabilidade em Projetos Web**, trabalhamos em dois recursos que ajudam a localizar registros nas listagens: **campo de pesquisa** e **filtros de pesquisa**.
 
-**Integrantes:** 
-Arthur Risso Pereira Rodovalho;
-Henrique Silva do Nascimento;
-Joao Pedro Rodrigues Monção.
+## Integrantes
 
-## Executar para a apresentação
+- Arthur Risso Pereira Rodovalho
+- Henrique Silva do Nascimento
+- Joao Pedro Rodrigues Monção
 
-Requer **JDK 17 ou superior**. O Maven Wrapper já acompanha o projeto e baixa as dependências na primeira execução.
+## Como executar o projeto
 
-Na pasta que contém o `pom.xml`, execute um dos comandos abaixo.
+Para testar o sistema, use o **modo demonstração**. Ele já vem com registros fictícios e uma conta de acesso. Você só precisa do **JDK 17 ou superior**. O Maven Wrapper acompanha o projeto e baixa as dependências na primeira execução.
 
-| Sistema | Comando |
-| --- | --- |
-| Windows (PowerShell) | `.\mvnw.cmd spring-boot:run -D"spring-boot.run.profiles=demo"` |
-| Linux ou macOS | `./mvnw spring-boot:run -Dspring-boot.run.profiles=demo` |
+1. Extraia o ZIP ou clone o repositório.
+2. Abra o terminal na pasta que contém o arquivo `pom.xml`.
+3. Execute o comando correspondente ao seu sistema:
 
-Abra [localhost:8080/login](http://localhost:8080/login) e entre com o usuário **demo** e a senha **SifDemo2026!**. O perfil `demo` roda apenas na interface local e usa H2 em memória. Ele já abre com registros fictícios e reinicia os dados quando a aplicação é encerrada.
+   **Windows (PowerShell)**
 
-Se a porta 8080 estiver ocupada, acrescente `-D"spring-boot.run.arguments=--server.port=8081"` ao comando e altere a porta no navegador.
+   ```powershell
+   .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=demo"
+   ```
 
-### Usar o PostgreSQL do projeto
+   **Linux ou macOS**
 
-Fora do perfil `demo`, o sistema usa o PostgreSQL. Disponibilize o banco `db_novosiga` e configure as variáveis abaixo para sua instalação. Depois execute o mesmo comando sem a opção de perfil e faça login com uma conta existente ou crie uma conta pela página de login.
+   ```bash
+   ./mvnw spring-boot:run -Dspring-boot.run.profiles=demo
+   ```
+
+4. Quando a aplicação terminar de iniciar, mantenha o terminal aberto e acesse [http://127.0.0.1:8080/login](http://127.0.0.1:8080/login).
+5. Entre com a conta abaixo:
+
+   | Usuário | Senha |
+   | --- | --- |
+   | `demo` | `SifDemo2026!` |
+
+O modo demonstração usa **H2 em memória** e roda localmente. Ao reiniciar a aplicação, os registros de exemplo são restaurados.
+
+Se a porta 8080 estiver ocupada, acrescente `"-Dspring-boot.run.arguments=--server.port=8081"` ao final do comando e acesse `http://127.0.0.1:8081/login`.
+
+## Recursos da avaliação
+
+### Tópico 1 — Campo de pesquisa
+
+Digite parte do que você procura. A lista é atualizada enquanto você digita e mostra quantos registros foram encontrados. Por exemplo, pesquisar `joao` encontra cadastros com o nome **João**, mesmo sem o acento. O botão **Buscar** também funciona com o JavaScript desativado.
+
+### Tópico 3 — Filtros de pesquisa
+
+Os filtros podem ser usados sozinhos ou junto com uma palavra-chave. As opções de curso, professor, graduação e marca vêm dos cadastros do sistema. Em Produtos, as faixas de preço já vêm definidas para facilitar a seleção.
+
+| Tela | O que você pode pesquisar | Filtros disponíveis |
+| --- | --- | --- |
+| Alunos | Nome, CPF ou cidade | Curso |
+| Cursos | Nome ou descrição | — |
+| Disciplinas | Nome ou sigla | Curso e professor |
+| Professores | Nome ou CPF | Graduação |
+| Produtos | Descrição, marca ou modelo | Marca e faixa de preço |
+
+Se nenhum registro corresponder aos critérios, o sistema mostra uma mensagem. Clique em **Limpar busca** para remover o texto e os filtros e voltar à lista completa. Os critérios também ficam na URL, o que permite reabrir a mesma busca com uma conta que tenha acesso à tela.
+
+## Roteiro para testar e apresentar
+
+Entre com a conta `demo` e siga os passos abaixo. Os resultados correspondem aos dados de exemplo carregados ao iniciar o sistema.
+
+| Onde | O que fazer | O que deve aparecer |
+| --- | --- | --- |
+| **Produtos** | Digite `MOUSE` e aguarde a atualização. | **3 resultados** |
+| **Produtos** | Mantenha `MOUSE` e selecione a marca **Orbit**. | **2 resultados** |
+| **Produtos** | Mantenha a busca e a marca. Selecione **De R$ 100 a R$ 499,99**. | Apenas **Mouse sem fio** |
+| **Produtos** | Troque o termo por `xyz`. Depois clique em **Limpar busca**. | Uma mensagem de nenhum resultado e, após limpar, os **5 produtos iniciais** |
+| **Alunos** | Digite `joao` sem acento. Depois selecione **Logística**. | **2 alunos** na busca inicial e apenas **João Ribeiro** após aplicar o filtro |
+| **Disciplinas** | Selecione o curso **Sistemas** e a professora **Helena Costa**. | Apenas **Programação Web** |
+
+## Como a busca funciona no código
+
+1. A tela envia a palavra-chave e os filtros selecionados como parâmetros de uma requisição `GET`.
+2. O controlador recebe os critérios. O serviço normaliza o texto da busca, e o repositório consulta o banco com os critérios combinados.
+3. O Thymeleaf monta a listagem. Quando o JavaScript está ativo, ele atualiza a área de resultados sem recarregar a página inteira. O botão **Buscar** também permite enviar o formulário normalmente.
+
+**Tecnologias utilizadas:** Java 17, Spring Boot, Spring MVC, Spring Data JPA, Spring Security, Thymeleaf, HTML, CSS, JavaScript, PostgreSQL, H2 e Maven.
+
+## Como usar o PostgreSQL
+
+Para usar o banco do projeto, disponibilize o PostgreSQL com o banco `db_novosiga`. Configure as variáveis abaixo conforme sua instalação:
 
 | Variável | Configuração |
 | --- | --- |
-| `SIF_DB_URL` | Padrão: `jdbc:postgresql://localhost:5432/db_novosiga` |
-| `SIF_DB_USER` | Padrão: `postgres` |
-| `SIF_DB_PASSWORD` | Senha do usuário do banco |
+| `SIF_DB_URL` | Padrão `jdbc:postgresql://localhost:5432/db_novosiga` |
+| `SIF_DB_USER` | Padrão `postgres` |
+| `SIF_DB_PASSWORD` | Senha do usuário do PostgreSQL |
 
-## Tópico 1 · Campo de pesquisa
+Execute `.\mvnw.cmd spring-boot:run` no Windows ou `./mvnw spring-boot:run` no Linux ou macOS. Na tela de login, use uma conta cadastrada nesse banco ou crie uma pela própria aplicação.
 
-Digite parte do nome ou do termo que procura. Os resultados são atualizados enquanto você digita, mesmo que a palavra seja escrita sem acento ou em maiúsculas. A lista mostra quantos registros correspondem à busca. O botão **Buscar** também funciona com o JavaScript desativado.
+## Teste de inicialização
 
-| Tela | Campos pesquisados |
-| --- | --- |
-| Alunos | Nome, CPF ou cidade |
-| Cursos | Nome ou descrição |
-| Disciplinas | Nome ou sigla |
-| Professores | Nome ou CPF |
-| Produtos | Descrição, marca ou modelo |
-
-## Tópico 3 · Filtros de pesquisa
-
-Os filtros podem ser usados sozinhos ou em conjunto com o campo de pesquisa. Cursos, professores, graduações e marcas são obtidos dos cadastros. Em Produtos, as faixas predefinidas permitem escolher um intervalo sem digitar valores.
-
-| Tela | Filtros |
-| --- | --- |
-| Alunos | Curso |
-| Disciplinas | Curso e professor |
-| Professores | Graduação |
-| Produtos | Marca e faixa de preço |
-
-A opção **Limpar busca** volta à listagem completa. Ao abrir um link copiado da barra de endereço dentro do SIF, os critérios são recuperados da URL, desde que o usuário tenha acesso à tela.
-
-## Roteiro rápido para demonstrar
-
-1. Em **Produtos**, digite `MOUSE`. Aparecem 3 produtos.
-2. Com o termo preenchido, selecione **Orbit**. Aparecem 2 produtos. Escolha **De R$ 100 a R$ 499,99**. Sobra apenas **Mouse sem fio**.
-3. Digite `xyz` para mostrar a mensagem de nenhum resultado e clique em **Limpar busca** para voltar aos 5 produtos iniciais.
-4. Em **Alunos**, procure `joao` sem acento. Aparecem dois alunos. Selecione **Logística** para encontrar apenas **João Ribeiro**.
-5. Em **Disciplinas**, combine **Sistemas** e **Helena Costa** para encontrar **Programação Web**.
-
-## Implementação
-
-- **Java 17, Spring Boot e Spring MVC:** os controladores recebem os critérios em parâmetros GET.
-- **Spring Data JPA:** os repositórios buscam os registros no banco e combinam os filtros. Os serviços normalizam o termo digitado.
-- **Thymeleaf, HTML, CSS e JavaScript:** a tela apresenta os controles e o resumo dos resultados. O JavaScript solicita a mesma listagem ao servidor e atualiza a área de resultados, mantendo o foco no campo em uso.
-- **Spring Security, PostgreSQL, H2 e Maven:** autenticação, banco da aplicação, modo de demonstração e compilação, respectivamente.
-
-Para rodar o teste de inicialização use `./mvnw test` no Linux ou macOS ou `.\mvnw.cmd test` no Windows.
+O projeto inclui um teste que verifica se a aplicação inicia com o perfil de demonstração. Na pasta do `pom.xml`, execute `.\mvnw.cmd test` no Windows ou `./mvnw test` no Linux ou macOS.
