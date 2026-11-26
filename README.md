@@ -1,6 +1,6 @@
 # SIF — Sistema Interno da Fatec
 
-O SIF é uma aplicação web para gerenciar alunos, cursos, disciplinas, professores, produtos e pedidos. Para a **Avaliação Final de Encontrabilidade em Projetos Web**, trabalhamos em dois recursos que ajudam a localizar registros nas listagens: **campo de pesquisa** e **filtros de pesquisa**.
+O SIF é o sistema que usamos para gerenciar alunos, cursos, disciplinas, professores, produtos e pedidos. Para a avaliação de Encontrabilidade, a gente trabalhou em duas coisas que você vai encontrar nas listagens: **o campo de pesquisa e os filtros**.
 
 ## Integrantes
 
@@ -8,48 +8,41 @@ O SIF é uma aplicação web para gerenciar alunos, cursos, disciplinas, profess
 - Henrique Silva do Nascimento
 - Joao Pedro Rodrigues Monção
 
-## Como executar o projeto
+## Como rodar o SIF no seu computador
 
-Para testar o sistema, use o **modo demonstração**. Ele já vem com registros fictícios e uma conta de acesso. Você só precisa do **JDK 17 ou superior**. O Maven Wrapper acompanha o projeto e baixa as dependências na primeira execução.
+Se você só quer abrir o sistema e testar, comece pelo **modo demonstração**. Ele já vem com uma conta de teste e alguns registros fictícios. Você vai precisar do **JDK 17 ou superior**. O Maven Wrapper já vem no projeto e baixa as dependências na primeira vez que você rodar.
 
-1. Extraia o ZIP ou clone o repositório.
-2. Abra o terminal na pasta que contém o arquivo `pom.xml`.
-3. Execute o comando correspondente ao seu sistema:
+Extraia o ZIP ou clone o repositório. Depois, abra o terminal na pasta onde está o arquivo `pom.xml` e use o comando do seu sistema.
 
-   **Windows (PowerShell)**
+**Windows (PowerShell)**
 
-   ```powershell
-   .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=demo"
-   ```
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=demo"
+```
 
-   **Linux ou macOS**
+**Linux ou macOS**
 
-   ```bash
-   ./mvnw spring-boot:run -Dspring-boot.run.profiles=demo
-   ```
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=demo
+```
 
-4. Quando a aplicação terminar de iniciar, mantenha o terminal aberto e acesse [http://127.0.0.1:8080/login](http://127.0.0.1:8080/login).
-5. Entre com a conta abaixo:
+Quando o sistema iniciar, deixe o terminal aberto e acesse [http://127.0.0.1:8080/login](http://127.0.0.1:8080/login). Entre com o usuário **`demo`** e a senha **`SifDemo2026!`**.
 
-   | Usuário | Senha |
-   | --- | --- |
-   | `demo` | `SifDemo2026!` |
+Nesse modo, os dados ficam em memória no H2. Se você cadastrar ou alterar alguma coisa, pode testar normalmente. Quando reiniciar o sistema, ele volta aos registros de exemplo.
 
-O modo demonstração usa **H2 em memória** e roda localmente. Ao reiniciar a aplicação, os registros de exemplo são restaurados.
+Se a porta 8080 já estiver em uso, acrescente `"-Dspring-boot.run.arguments=--server.port=8081"` ao final do comando e abra [http://127.0.0.1:8081/login](http://127.0.0.1:8081/login).
 
-Se a porta 8080 estiver ocupada, acrescente `"-Dspring-boot.run.arguments=--server.port=8081"` ao final do comando e acesse `http://127.0.0.1:8081/login`.
-
-## Recursos da avaliação
+## O que a gente fez para a avaliação
 
 ### Tópico 1 — Campo de pesquisa
 
-Digite parte do que você procura. A lista é atualizada enquanto você digita e mostra quantos registros foram encontrados. Por exemplo, pesquisar `joao` encontra cadastros com o nome **João**, mesmo sem o acento. O botão **Buscar** também funciona com o JavaScript desativado.
+Imagina que você quer encontrar um aluno, mas só lembra o primeiro nome. Na tela de **Alunos**, basta digitar parte do nome. Se você escrever `joao`, por exemplo, a busca encontra **João** mesmo sem o acento. A lista muda enquanto você digita e mostra quantos resultados encontrou. Se o JavaScript estiver desativado, é só usar o botão **Buscar**.
 
 ### Tópico 3 — Filtros de pesquisa
 
-Os filtros podem ser usados sozinhos ou junto com uma palavra-chave. As opções de curso, professor, graduação e marca vêm dos cadastros do sistema. Em Produtos, as faixas de preço já vêm definidas para facilitar a seleção.
+Agora imagina que apareceram dois alunos chamados João e você sabe que um deles faz **Logística**. Dá para manter `joao` no campo de pesquisa e selecionar o curso no filtro. A lista passa a mostrar só os alunos que atendem aos dois critérios. Você também pode usar os filtros com o campo de pesquisa vazio.
 
-| Tela | O que você pode pesquisar | Filtros disponíveis |
+| Tela | O que dá para pesquisar | Filtros |
 | --- | --- | --- |
 | Alunos | Nome, CPF ou cidade | Curso |
 | Cursos | Nome ou descrição | — |
@@ -57,41 +50,37 @@ Os filtros podem ser usados sozinhos ou junto com uma palavra-chave. As opções
 | Professores | Nome ou CPF | Graduação |
 | Produtos | Descrição, marca ou modelo | Marca e faixa de preço |
 
-Se nenhum registro corresponder aos critérios, o sistema mostra uma mensagem. Clique em **Limpar busca** para remover o texto e os filtros e voltar à lista completa. Os critérios também ficam na URL, o que permite reabrir a mesma busca com uma conta que tenha acesso à tela.
+Os cursos, professores, graduações e marcas que aparecem nos filtros vêm dos cadastros. As faixas de preço já estão definidas para você escolher. Se quiser voltar à lista completa, clique em **Limpar busca**. Se quiser abrir a mesma busca depois, copie o endereço da página. O texto e os filtros ficam na URL.
 
-## Roteiro para testar e apresentar
+## Um teste rápido para ver os dois recursos funcionando
 
-Entre com a conta `demo` e siga os passos abaixo. Os resultados correspondem aos dados de exemplo carregados ao iniciar o sistema.
+Entre com a conta `demo` e abra **Produtos**. Faça os passos na ordem, mantendo o que você já selecionou:
 
-| Onde | O que fazer | O que deve aparecer |
-| --- | --- | --- |
-| **Produtos** | Digite `MOUSE` e aguarde a atualização. | **3 resultados** |
-| **Produtos** | Mantenha `MOUSE` e selecione a marca **Orbit**. | **2 resultados** |
-| **Produtos** | Mantenha a busca e a marca. Selecione **De R$ 100 a R$ 499,99**. | Apenas **Mouse sem fio** |
-| **Produtos** | Troque o termo por `xyz`. Depois clique em **Limpar busca**. | Uma mensagem de nenhum resultado e, após limpar, os **5 produtos iniciais** |
-| **Alunos** | Digite `joao` sem acento. Depois selecione **Logística**. | **2 alunos** na busca inicial e apenas **João Ribeiro** após aplicar o filtro |
-| **Disciplinas** | Selecione o curso **Sistemas** e a professora **Helena Costa**. | Apenas **Programação Web** |
+1. Digite `MOUSE`. Devem aparecer **3 resultados**.
+2. Selecione a marca **Orbit**. Agora devem aparecer **2 resultados**.
+3. Escolha **De R$ 100 a R$ 499,99** na faixa de preço. Deve sobrar só o **Mouse sem fio**.
+4. Troque `MOUSE` por `xyz`. Vai aparecer uma mensagem de que a busca não encontrou resultados. Clique em **Limpar busca** para voltar aos **5 produtos iniciais**.
 
-## Como a busca funciona no código
+Para testar nas telas acadêmicas, pesquise `joao` em **Alunos** e selecione **Logística**. Deve sobrar apenas **João Ribeiro**. Em **Disciplinas**, selecione **Sistemas** e **Helena Costa**. O resultado esperado é **Programação Web**.
 
-1. A tela envia a palavra-chave e os filtros selecionados como parâmetros de uma requisição `GET`.
-2. O controlador recebe os critérios. O serviço normaliza o texto da busca, e o repositório consulta o banco com os critérios combinados.
-3. O Thymeleaf monta a listagem. Quando o JavaScript está ativo, ele atualiza a área de resultados sem recarregar a página inteira. O botão **Buscar** também permite enviar o formulário normalmente.
+## O que acontece no código quando você pesquisa
 
-**Tecnologias utilizadas:** Java 17, Spring Boot, Spring MVC, Spring Data JPA, Spring Security, Thymeleaf, HTML, CSS, JavaScript, PostgreSQL, H2 e Maven.
+Quando você digita ou muda um filtro, a página envia os critérios para o Spring Boot em uma requisição `GET`. O controlador recebe esses dados, o serviço prepara o texto da busca e o repositório pesquisa no banco usando os critérios juntos. O Thymeleaf monta a lista, e o JavaScript troca só a parte dos resultados na tela.
 
-## Como usar o PostgreSQL
+Usamos **Java 17, Spring Boot, Spring MVC, Spring Data JPA e Spring Security** no backend, **Thymeleaf, HTML, CSS e JavaScript** nas telas, **PostgreSQL e H2** como bancos e **Maven** para lidar com dependências, compilação e testes.
 
-Para usar o banco do projeto, disponibilize o PostgreSQL com o banco `db_novosiga`. Configure as variáveis abaixo conforme sua instalação:
+## Se você quiser rodar com PostgreSQL
 
-| Variável | Configuração |
+Crie o banco `db_novosiga` no PostgreSQL e configure as variáveis conforme a sua instalação:
+
+| Variável | O que colocar |
 | --- | --- |
-| `SIF_DB_URL` | Padrão `jdbc:postgresql://localhost:5432/db_novosiga` |
-| `SIF_DB_USER` | Padrão `postgres` |
-| `SIF_DB_PASSWORD` | Senha do usuário do PostgreSQL |
+| `SIF_DB_URL` | Por padrão, `jdbc:postgresql://localhost:5432/db_novosiga` |
+| `SIF_DB_USER` | Por padrão, `postgres` |
+| `SIF_DB_PASSWORD` | A senha do seu usuário do PostgreSQL |
 
-Execute `.\mvnw.cmd spring-boot:run` no Windows ou `./mvnw spring-boot:run` no Linux ou macOS. Na tela de login, use uma conta cadastrada nesse banco ou crie uma pela própria aplicação.
+Rode `.\mvnw.cmd spring-boot:run` no Windows ou `./mvnw spring-boot:run` no Linux ou macOS. Na tela de login, entre com uma conta desse banco ou crie uma pela própria aplicação.
 
-## Teste de inicialização
+## Como rodar o teste do projeto
 
-O projeto inclui um teste que verifica se a aplicação inicia com o perfil de demonstração. Na pasta do `pom.xml`, execute `.\mvnw.cmd test` no Windows ou `./mvnw test` no Linux ou macOS.
+O teste verifica se a aplicação consegue iniciar com o perfil de demonstração. Na pasta do `pom.xml`, rode `.\mvnw.cmd test` no Windows ou `./mvnw test` no Linux ou macOS.
