@@ -38,10 +38,10 @@ a {
 .navbar {
   background: var(--bg);
   color: #fff;
-  padding: 16px 32px;
+  padding: 12px 28px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 18px;
   box-shadow: var(--shadow);
 }
 
@@ -52,6 +52,7 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .navbar .brand .logo {
@@ -67,13 +68,15 @@ a {
 
 .navbar nav {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   flex-wrap: wrap;
+  margin-left: auto;
+  justify-content: flex-end;
 }
 
 .navbar nav a {
   color: #cbd5e1;
-  padding: 8px 14px;
+  padding: 8px 12px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
@@ -83,6 +86,154 @@ a {
 .navbar nav a:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
+}
+
+/* ---------- Global search (Stripe-like) ---------- */
+.global-search {
+  position: relative;
+  flex: 1 1 220px;
+  max-width: 420px;
+  min-width: 160px;
+}
+
+.global-search__field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.55);
+  color: #e2e8f0;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.global-search__field:focus-within {
+  border-color: rgba(129, 140, 248, 0.7);
+  background: rgba(15, 23, 42, 0.85);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+}
+
+.global-search__icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: #94a3b8;
+}
+
+.global-search__field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #f8fafc;
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.global-search__field input::placeholder {
+  color: #94a3b8;
+}
+
+.global-search__field input::-webkit-search-decoration,
+.global-search__field input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.global-search__kbd {
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+
+.global-search__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  max-height: min(420px, 70vh);
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18), 0 2px 8px rgba(15, 23, 42, 0.08);
+  color: var(--text);
+}
+
+.global-search__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: inherit;
+  transition: background 0.12s;
+}
+
+.global-search__item:hover,
+.global-search__item.is-active {
+  background: var(--primary-soft);
+}
+
+.global-search__text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.global-search__title {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.global-search__subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.global-search__type {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--primary-dark);
+  background: #fff;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  padding: 4px 8px;
+}
+
+.global-search__hint,
+.global-search__empty {
+  margin: 0;
+  padding: 14px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.global-search__panel[aria-busy="true"] {
+  opacity: 0.72;
 }
 
 /* ---------- Layout ---------- */
@@ -415,13 +566,35 @@ tbody tr:hover {
   font-variant-numeric: tabular-nums;
 }
 
+@media (max-width: 960px) {
+  .navbar {
+    flex-wrap: wrap;
+  }
+
+  .global-search {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .navbar nav {
+    margin-left: 0;
+  }
+}
+
 @media (max-width: 640px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
+
   .navbar {
     flex-direction: column;
+    align-items: stretch;
     gap: 12px;
+  }
+
+  .global-search__kbd {
+    display: none;
   }
 }
 

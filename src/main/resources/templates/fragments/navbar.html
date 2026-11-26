@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <th:block th:fragment="app">
+      <header class="navbar">
+        <div class="brand"><a href="/home">SIF</a></div>
+
+        <div class="global-search" data-global-search>
+          <label class="global-search__field">
+            <svg class="global-search__icon" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M8.5 3a5.5 5.5 0 0 1 4.38 8.82l3.65 3.65a.75.75 0 1 1-1.06 1.06l-3.65-3.65A5.5 5.5 0 1 1 8.5 3Zm0 1.5a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"
+              />
+            </svg>
+            <input
+              type="search"
+              data-global-search-input
+              placeholder="Buscar no SIF…"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Busca global"
+              aria-autocomplete="list"
+              aria-controls="global-search-results"
+              aria-expanded="false"
+            />
+            <kbd class="global-search__kbd" data-global-search-kbd>⌘K</kbd>
+          </label>
+
+          <div
+            id="global-search-results"
+            class="global-search__panel"
+            data-global-search-panel
+            hidden
+            role="listbox"
+            aria-label="Sugestões de busca"
+          ></div>
+        </div>
+
+        <nav>
+          <a href="/home">Início</a>
+          <a href="/alunos/listar">Alunos</a>
+          <a href="/cursos/listar">Cursos</a>
+          <a href="/disciplinas/listar">Disciplinas</a>
+          <a href="/professores/listar">Professores</a>
+          <a href="/produtos/listar">Produtos</a>
+          <a href="/pedidos/criar">Pedidos</a>
+        </nav>
+      </header>
+      <script defer th:src="@{/js/busca-global.js}"></script>
+    </th:block>
+  </body>
+</html>

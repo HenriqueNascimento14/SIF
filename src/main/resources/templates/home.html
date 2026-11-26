@@ -7,18 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
   <body>
-    <header class="navbar">
-      <div class="brand"><a href="/home">SIF</a></div>
-      <nav>
-        <a href="/home">Início</a>
-        <a href="/alunos/listar">Alunos</a>
-        <a href="/cursos/listar">Cursos</a>
-        <a href="/disciplinas/listar">Disciplinas</a>
-        <a href="/professores/listar">Professores</a>
-        <a href="/produtos/listar">Produtos</a>
-        <a href="/pedidos/criar">Pedidos</a>
-      </nav>
-    </header>
+    <div th:replace="~{fragments/navbar :: app}"></div>
 
     <main class="container">
       <section class="hero">
