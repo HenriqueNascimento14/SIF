@@ -3,9 +3,9 @@
 Aplicação web para gerenciar alunos, cursos, disciplinas, professores, produtos e pedidos.
 
 **Integrantes:** 
-Arthur Risso Pereira Rodovalho
-Henrique Silva do Nascimento
-Joao Pedro Rodrigues Monção
+Arthur Risso Pereira Rodovalho;
+Henrique Silva do Nascimento;
+Joao Pedro Rodrigues Monção.
 
 ## Executar para a apresentação
 
